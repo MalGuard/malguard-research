@@ -7,3 +7,5 @@ Research website: https://research.malguard.site/
 The site is published using the GitHub Pages workflow in `.github/workflows/pages.yml`.
 
 Publication status: original project-authored technical notes; not independently peer-reviewed or certified.
+
+Deployment refresh: 2026-10-21. Monochrome publication redesign; HTTPS custom-domain configuration managed in GitHub Pages settings.
