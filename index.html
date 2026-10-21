@@ -1,1 +1,71 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080808"><title>Research publications | MalGuard Research</title><meta name="description" content="Original technical research notes on security evidence and defensive scanners."><link rel="canonical" href="https://research.malguard.site/"><link rel="stylesheet" href="/assets/research-dark-20261021.css"></head><body><div class="wrap"><header class="nav"><a class="brand" href="/">MALGUARD <b>RESEARCH</b></a><nav><a href="/">Papers</a><a href="/methodology.html">Methodology</a><a href="https://malguard.site/">Main site ↗</a></nav></header><main><div class="eyebrow">ORIGINAL TECHNICAL NOTES / 2026</div><section class="hero"><h1>Evidence before <em>assurance.</em></h1><p class="lead">Explore how defensive tools interpret file identity, inspect game-mod archives and report uncertainty. We separate observations from conclusions.</p><div class="tags"><span>SECURITY EVIDENCE</span><span>GAME MOD ANALYSIS</span><span>TRANSPARENT LIMITATIONS</span></div></section><h2 class="section">Research papers</h2><div class="grid"><a class="tile" href="/papers/hash-identity-vs-trust.html"><small>PAPER 01 · FILE IDENTITY</small><h2>A File Hash Identifies Bytes, Not Trust</h2><p>Cryptographic hashes provide a stable identity for bytes. They cannot, on their own, establish whether a file is safe.</p><strong>Read paper →</strong></a><a class="tile" href="/papers/zip-structure-vs-filename.html"><small>PAPER 02 · ARCHIVE INSPECTION</small><h2>Archive Structure Matters More Than a Filename</h2><p>A game-mod archive should be assessed using observable structure, not just a reassuring filename or extension.</p><strong>Read paper →</strong></a><a class="tile" href="/papers/evidence-ladder-for-scanners.html"><small>PAPER 03 · EVIDENCE REPORTING</small><h2>An Evidence Ladder for Security Scanners</h2><p>Security tools should distinguish what they observed, what sources corroborate and what they infer.</p><strong>Read paper →</strong></a></div><section class="note"><h2>Method, not marketing.</h2><p>These notes are not independent peer reviews, certifications or product performance tests. They document concepts and limitations. <a href="/methodology.html">Read our methodology →</a></p></section></main><footer><span>© 2026 MalGuard Research · Original technical notes</span><span>Not independently peer-reviewed · <a href="https://github.com/MalGuard/malguard-research">Open source ↗</a></span></footer></div></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#05080e">
+<meta name="description" content="MalGuard Research publishes original technical notes about security evidence, game-mod archives, file identity, and uncertainty in defensive scanners.">
+<title>MalGuard Research | Advancing Game Security Research</title>
+<link rel="canonical" href="https://research.malguard.site/">
+<link rel="icon" href="/assets/malguard-logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/research-home-20261021.css">
+</head>
+<body>
+<div class="hero-sky">
+  <div class="home-wrap">
+    <header class="research-header">
+      <a class="research-brand" href="/" aria-label="MalGuard Research home"><img src="/assets/malguard-logo.svg" width="45" height="45" alt="">MalGuard <span class="brand-divider"></span><span class="brand-suffix">Research</span></a>
+      <nav class="research-nav" aria-label="Primary navigation">
+        <a href="#papers">Papers</a>
+        <a href="/methodology.html">Methodology</a>
+        <a href="https://github.com/MalGuard/malguard-research">Open source</a>
+        <a href="https://malguard.site/">Main site</a>
+      </nav>
+      <div class="nav-actions"><a class="nav-source" href="https://github.com/MalGuard/malguard-research">GitHub ↗</a><a class="nav-contact" href="https://github.com/MalGuard/malguard-research/issues">Contact ↗</a></div>
+    </header>
+    <main>
+      <section class="hero-content" aria-labelledby="hero-title">
+        <p class="hero-eyebrow">MALGUARD RESEARCH</p>
+        <h1 class="hero-title" id="hero-title"><span>Advancing</span><span>Game Security Research</span></h1>
+        <p class="hero-lead">We publish technical research notes on file identity, game-mod archive inspection, and evidence-based security analysis. Clear observations, transparent limitations, and practical defensive thinking.</p>
+        <div class="hero-actions"><a class="action primary" href="#papers">Explore Research <span aria-hidden="true">→</span></a><a class="action secondary" href="/methodology.html">Our Methodology</a></div>
+      </section>
+    </main>
+  </div>
+</div>
+<div class="content-region">
+  <div class="home-wrap">
+    <section class="featured" aria-labelledby="featured-title">
+      <div class="featured-copy">
+        <span class="label-blue">Featured Research</span>
+        <h2 id="featured-title">A File Hash Identifies Bytes, Not Trust</h2>
+        <p>Cryptographic hashes are powerful tools for identifying exact file contents, but they are not evidence that a file is safe. This paper explains how file identity differs from trust, and why a reliable security assessment requires additional context.</p>
+        <div class="feature-links">
+          <a href="/papers/hash-identity-vs-trust.html">Read the Paper ↗</a>
+          <span class="link-separator" aria-hidden="true"></span>
+          <a href="/methodology.html">Methodology ↗</a>
+          <span class="link-separator" aria-hidden="true"></span>
+          <a href="https://github.com/MalGuard/malguard-research">Explore the Source ↗</a>
+        </div>
+      </div>
+      <div class="paper-stage" role="img" aria-label="Stylized preview of an open research publication">
+        <div class="book" aria-hidden="true">
+          <div class="book-page left"><span class="paper-title">A File Hash Identifies<br>Bytes, Not Trust</span><span class="paper-sub">MalGuard Research · Technical Note 01</span><span class="paper-rule"></span><span class="paper-heading">Abstract</span><span class="paper-lines short"></span><span class="paper-heading">1. Introduction</span><span class="paper-lines"></span></div>
+          <div class="book-page right"><span class="paper-heading">2. Identity and evidence</span><span class="paper-columns"><span class="paper-lines"></span><span class="paper-lines"></span></span><span class="paper-heading">3. Limitations</span><span class="paper-columns"><span class="paper-lines"></span><span class="paper-lines"></span></span></div>
+        </div>
+      </div>
+    </section>
+    <section id="papers" aria-labelledby="papers-title">
+      <div class="section-head"><h2 id="papers-title">Research publications</h2><span>Original technical notes / 2026</span></div>
+      <div class="papers-grid">
+        <article class="paper-card"><small>PAPER 01 · FILE IDENTITY</small><h3>A File Hash Identifies Bytes, Not Trust</h3><p>File identity and file trust are different questions. Explore the limits of cryptographic hashes as security evidence.</p><a href="/papers/hash-identity-vs-trust.html">Read research <span aria-hidden="true">↗</span></a></article>
+        <article class="paper-card"><small>PAPER 02 · ARCHIVE INSPECTION</small><h3>Archive Structure Matters More Than a Filename</h3><p>Learn why observable archive contents matter more than a convincing name or extension when inspecting game mods.</p><a href="/papers/zip-structure-vs-filename.html">Read research <span aria-hidden="true">↗</span></a></article>
+        <article class="paper-card"><small>PAPER 03 · EVIDENCE REPORTING</small><h3>An Evidence Ladder for Security Scanners</h3><p>A framework for separating direct observations, external corroboration, and inference in defensive scan reports.</p><a href="/papers/evidence-ladder-for-scanners.html">Read research <span aria-hidden="true">↗</span></a></article>
+      </div>
+    </section>
+    <aside class="research-note" aria-label="Research publication disclosure"><div><h2>Research with clear limitations.</h2><p>These are original technical notes from the MalGuard project, not independently peer-reviewed publications or product certification results. We distinguish observations from conclusions.</p></div><a href="/methodology.html">Read our methodology ↗</a></aside>
+    <footer class="home-footer"><span>© 2026 MalGuard Research · Original technical notes</span><span>Not independently peer-reviewed · <a href="https://github.com/MalGuard/malguard-research">Source on GitHub ↗</a></span></footer>
+  </div>
+</div>
+</body>
+</html>
