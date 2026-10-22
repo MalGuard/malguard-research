@@ -34,6 +34,7 @@ jobs:
           mkdir -p assets/vendor
           cp node_modules/page-flip/dist/js/page-flip.browser.js assets/vendor/page-flip.browser.js
           test -s assets/vendor/page-flip.browser.js
+          rm -rf node_modules package-lock.json
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
