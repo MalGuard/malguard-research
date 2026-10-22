@@ -21,6 +21,10 @@ GitHub Pages is deployed using `.github/workflows/pages.yml`. The workflow insta
 
 Three mod-security papers now include expanded evidence-to-claim guidance, explicit reporting templates and additional limitations. This is an editorial improvement, not a new empirical study.\n\n## Publication quality gate\n\nAfter generating PDFs and the local page-flip bundle, GitHub Actions runs `python tools/check-publications.py`. The check covers local links, book slugs, canonical URLs, research disclosures, reference links and expected build artifacts. It is structural QA, **not** a scientific peer review or a browser performance benchmark.\n\nThe site is intentionally lightweight. The book edition has a hard front/back cover and fixed-size, typeset paper leaves rather than scrolling article panels. It uses [StPageFlip 2.0.7](https://github.com/Nodlik/StPageFlip) (MIT license), copied locally during the GitHub Pages build; it supports page-corner dragging, touch gestures, keyboard arrows, navigation buttons and reduced-motion preferences. Other pages have no continuous animations; publication search uses local JavaScript.
 
+## Release verification
+
+Production releases run the GitHub Pages workflow on the `main` branch. Confirm the workflow succeeds and test the book reader, paper links, and generated PDF files at the live custom domain before marking the release verified.
+
 ## Corrections
 
 Please open an issue in this repository with a clear explanation and source references.
