@@ -1,1 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://research.malguard.site/</loc></url><url><loc>https://research.malguard.site/methodology.html</loc></url><url><loc>https://research.malguard.site/papers/hash-identity-vs-trust.html</loc></url><url><loc>https://research.malguard.site/papers/zip-structure-vs-filename.html</loc></url><url><loc>https://research.malguard.site/papers/evidence-ladder-for-scanners.html</loc></url></urlset>
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://research.malguard.site/</loc><lastmod>2026-10-22</lastmod></url>
+  <url><loc>https://research.malguard.site/methodology.html</loc><lastmod>2026-10-22</lastmod></url>
+  <url><loc>https://research.malguard.site/papers/hash-identity-vs-trust.html</loc><lastmod>2026-10-22</lastmod></url>
+  <url><loc>https://research.malguard.site/papers/zip-structure-vs-filename.html</loc><lastmod>2026-10-22</lastmod></url>
+  <url><loc>https://research.malguard.site/papers/evidence-ladder-for-scanners.html</loc><lastmod>2026-10-22</lastmod></url>
+  <url><loc>https://research.malguard.site/papers/game-mod-threat-model.html</loc><lastmod>2026-10-22</lastmod></url>
+  <url><loc>https://research.malguard.site/papers/malicious-mod-distribution.html</loc><lastmod>2026-10-22</lastmod></url>
+  <url><loc>https://research.malguard.site/papers/static-vs-behavioral-analysis.html</loc><lastmod>2026-10-22</lastmod></url>
+</urlset>
