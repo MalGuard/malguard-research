@@ -47,3 +47,19 @@
 .paper-card a.publication-visual{display:grid;place-items:center;align-self:stretch;margin:-5px -5px 23px;padding:0;min-height:235px;height:235px;font-size:inherit;font-weight:400;border:1px solid #2d3c56;border-radius:10px;background:radial-gradient(ellipse 70% 60% at 50% 47%,#26344b 0%,#111c30 64%,#0a111d 100%)}
 .paper-card a.publication-visual:hover{background:radial-gradient(ellipse 70% 60% at 50% 47%,#26344b 0%,#111c30 64%,#0a111d 100%);border-color:#8fa7d0}
 @media(max-width:760px){.paper-card a.publication-visual{height:225px;min-height:225px}}
+
+/* Research library index: useful filtering, format links, editorial depth */
+.paper-tools{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:0 0 22px;padding:16px 20px;border:1px solid #344156;border-radius:11px;background:#0b1320}
+.paper-tools label{font-size:12px;color:#d4e0f2;font-weight:700;white-space:nowrap}
+.paper-tools input{flex:1;min-width:190px;min-height:42px;border:1px solid #51617b;border-radius:8px;background:#101b2d;color:#fff;font:500 13px Inter,Arial,sans-serif;padding:10px 14px}
+.paper-tools input::placeholder{color:#9eafc7}.paper-tools input:focus-visible{outline:2px solid #86aaff;outline-offset:2px}
+.paper-tools span{font-size:12px;color:#abbdd7}
+.paper-card[hidden]{display:none!important}
+.paper-card .paper-formats{display:flex;gap:10px;margin-top:12px}
+.paper-card .paper-formats a{flex:1;justify-content:center;margin-top:0;padding:9px 8px;min-height:38px;background:transparent;border-color:#354c6e;color:#cbdaf2;font-size:11px}
+.paper-card .paper-formats a:hover{background:#1c3050}
+.book-four .publication-cover{background:linear-gradient(115deg,#e6e8ec,#bbc9d8);color:#12243e}
+.book-five .publication-cover{background:linear-gradient(115deg,#1e2b44,#0d1525);color:#fff;border-color:#53647d}
+.book-five .publication-mark{border-color:#9eaabd}.book-five .publication-book-subtitle{color:#ccd5e3}
+.book-six .publication-cover{background:linear-gradient(115deg,#f1f2f0,#b9c3ce);color:#16213a}
+@media(max-width:760px){.paper-tools{align-items:stretch}.paper-tools label{width:100%}.paper-tools input{width:100%;flex:auto}.paper-tools span{width:100%}}
