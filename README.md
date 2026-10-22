@@ -8,7 +8,7 @@ Six original technical notes on game-mod security, file identity, archive inspec
 
 Each publication is available in three formats:
 - Accessible HTML at `/papers/<slug>.html`
-- Interactive, swipe-to-turn 3D book reader at `/reader.html?paper=<slug>`
+- Hard-cover, paginated 3D book edition with touch page turning at `/reader.html?paper=<slug>`
 - Downloadable PDF at `/pdfs/<slug>.pdf` (generated during GitHub Pages deployment)
 
 ## Publication status
@@ -19,7 +19,7 @@ These are project-authored conceptual research notes, **not independently peer-r
 
 GitHub Pages is deployed using `.github/workflows/pages.yml`. The workflow installs pinned ReportLab, executes `python tools/build-pdfs.py`, then uploads the site including generated PDFs. The published PDFs are build outputs, not files committed to the source tree.
 
-The site is intentionally lightweight. Only the book reader uses on-demand CSS 3D page-turn animation. It supports drag/swipe on touch screens, keyboard arrows, navigation buttons, and reduced-motion preferences. Other pages have no continuous animations; publication search uses local JavaScript.
+The site is intentionally lightweight. The book edition has a hard front/back cover and fixed-size, typeset paper leaves rather than scrolling article panels. It uses [StPageFlip 2.0.7](https://github.com/Nodlik/StPageFlip) (MIT license), copied locally during the GitHub Pages build; it supports page-corner dragging, touch gestures, keyboard arrows, navigation buttons and reduced-motion preferences. Other pages have no continuous animations; publication search uses local JavaScript.
 
 ## Corrections
 
