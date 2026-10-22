@@ -63,3 +63,19 @@
 .book-five .publication-mark{border-color:#9eaabd}.book-five .publication-book-subtitle{color:#ccd5e3}
 .book-six .publication-cover{background:linear-gradient(115deg,#f1f2f0,#b9c3ce);color:#16213a}
 @media(max-width:760px){.paper-tools{align-items:stretch}.paper-tools label{width:100%}.paper-tools input{width:100%;flex:auto}.paper-tools span{width:100%}}
+
+/* Research homepage: GTA VI publication highlight; no global layout changes */
+.gta6-alert{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:25px 30px;margin:30px 0 27px;border:1px solid rgba(121,167,238,.42);border-radius:16px;background:linear-gradient(110deg,#112a4b,#14223b 65%,#0b1628);box-shadow:0 12px 36px rgba(0,0,0,.13)}
+.gta6-alert>div:first-child{max-width:690px}
+.gta6-alert span{font:800 10px/1.4 Inter,Arial,sans-serif;letter-spacing:.12em;color:#9ec5ff}
+.gta6-alert h2{font:750 clamp(21px,2.2vw,28px)/1.25 Inter,Arial,sans-serif;letter-spacing:-.035em;color:#fff;margin:10px 0}
+.gta6-alert p{font:13px/1.65 Inter,Arial,sans-serif;color:#c3d5ed;margin:0}
+.gta6-alert-actions{display:flex;flex-direction:column;align-items:stretch;gap:10px;min-width:190px}
+.gta6-alert-actions a{display:flex;justify-content:center;align-items:center;text-align:center;min-height:43px;padding:10px 13px;border:1px solid #8dafdf;border-radius:8px;font:700 12px/1.4 Inter,Arial,sans-serif;color:#f5faff;text-decoration:none}
+.gta6-alert-actions a:first-child{background:#f3f8ff;color:#173154;border-color:#f3f8ff}
+.gta6-alert-actions a:hover{background:#dae9ff;color:#132a4a}
+.book-seven .publication-cover{background:linear-gradient(130deg,#133963 0%,#0a1c34 72%,#112c50 100%);color:#fff;border-color:#6faaff}
+.book-seven .publication-mark{border-color:#7ca4d9;color:#c8ddfc}
+.book-seven .publication-book-title{color:#fff}
+.book-seven .publication-book-subtitle{color:#b5cef1}
+@media(max-width:760px){.gta6-alert{flex-direction:column;align-items:stretch;padding:21px 19px;margin:23px 0}.gta6-alert-actions{flex-direction:row;flex-wrap:wrap}.gta6-alert-actions a{flex:1;min-width:145px}}
