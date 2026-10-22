@@ -23,6 +23,7 @@
   let pages = [], current = 0, busy = false, gesture = null;
   let book, left, right, mesh, shade;
   let strips = [], sheetWidth = 0, pageHeight = 0, raf = 0;
+  let activeFlip = null, revealed = false;
 
   if (!allowed.has(slug)) {
     spread.textContent = "Select a published paper from the research index.";
@@ -80,6 +81,10 @@
     gesture = null;
     mesh.replaceChildren();
     mesh.hidden = true;
+    mesh.style.opacity = "1";
+    shade.style.opacity = "0";
+    activeFlip = null;
+    revealed = false;
     book.classList.remove("is-turning", "is-dragging");
     if (mobile()) {
       left.replaceChildren();
@@ -98,7 +103,7 @@
     strips = [];
     sheetWidth = book.clientWidth * (mobile() ? 1 : .5);
     pageHeight = book.clientHeight;
-    const count = mobile() ? 14 : 20;
+    const count = mobile() ? 12 : 16;
     const stripWidth = sheetWidth / count;
     const frontPage = pageAt(frontIndex);
     const backPage = pageAt(backIndex);
@@ -113,7 +118,7 @@
       backFace.className = "curl-face curl-back";
       for (const [face, source, offset] of [
         [frontFace, frontPage, i * stripWidth],
-        [backFace, backPage, sheetWidth - (i + 1) * stripWidth]
+        [backFace, backPage, sheetWidth - i * stripWidth]
       ]) {
         const content = document.createElement("div");
         content.className = "curl-content";
@@ -153,6 +158,23 @@
       x += Math.cos(radians) * width;
       z -= Math.sin(radians) * width;
     }
+    // Hand off to the resting page while the turning leaf still covers it.
+    // Crossfade during the last 8% to avoid a visible snap on reset.
+    if (activeFlip) {
+      const forward = activeFlip.direction > 0;
+      const completion = forward ? p : 1 - p;
+      const shouldReveal = completion >= .92;
+      if (!mobile() && shouldReveal !== revealed) {
+        const stationary = forward ? left : right;
+        const oldIndex = forward ? activeFlip.target - step() : activeFlip.target + step() + 1;
+        const newIndex = forward ? activeFlip.target : activeFlip.target + 1;
+        put(stationary, shouldReveal ? newIndex : oldIndex);
+        revealed = shouldReveal;
+      }
+      mesh.style.opacity = completion > .92
+        ? String(1 - clamp((completion - .92) / .08))
+        : "1";
+    }
     shade.style.opacity = (Math.sin(Math.PI * p) * .45).toFixed(3);
     shade.style.transform = "translateX(" + ((.5 - p) * sheetWidth * .55).toFixed(2) + "px)";
   }
@@ -181,6 +203,9 @@
       faceB = current;
     }
     buildMesh(faceA, faceB);
+    activeFlip = {target, direction};
+    revealed = false;
+    mesh.style.opacity = "1";
     book.classList.add("is-turning");
     draw(forward ? 0 : 1);
     return {target, direction, from:forward ? 0 : 1, to:forward ? 1 : 0};
