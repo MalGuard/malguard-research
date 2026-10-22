@@ -19,7 +19,6 @@
   const mobileQuery = matchMedia("(max-width: 760px)");
   const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
   const clamp = n => Math.min(1, Math.max(0, n));
-  const ease = n => 1 - Math.pow(1 - n, 3);
 
   let pages = [], current = 0, busy = false, gesture = null;
   let book, left, right, mesh, shade;
@@ -168,8 +167,8 @@
     if (mobile()) {
       // A single page moves aside to reveal the new page underneath.
       put(right, target);
-      faceA = current;
-      faceB = target;
+      faceA = forward ? current : target;
+      faceB = forward ? target : current;
     } else if (forward) {
       put(left, current);
       put(right, target + 1);
