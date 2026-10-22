@@ -4,12 +4,16 @@ Official research-notes website: https://research.malguard.site/
 
 ## Publications
 
-Six original technical notes on game-mod security, file identity, archive inspection, malware-related trust boundaries, supply-chain provenance and defensive evidence reporting.
+Seven original technical notes on game-mod security, file identity, archive inspection, malware-related trust boundaries, supply-chain provenance and defensive evidence reporting.
 
 Each publication is available in three formats:
 - Accessible HTML at `/papers/<slug>.html`
 - Hard-cover, paginated 3D book edition with touch page turning at `/reader.html?paper=<slug>`
 - Downloadable PDF at `/pdfs/<slug>.pdf` (generated during GitHub Pages deployment)
+
+## GTA VI security advisory
+
+The seventh publication, [GTA VI Fake Downloads and the Trust Problem](https://research.malguard.site/papers/gta6-fake-downloads-trust.html), summarizes official launch status and attributes documented scam incidents to third-party investigators. It has an exactly 15-page PDF built from the canonical HTML during publication, and a separate hardcover reader. No GTA VI-specific MalGuard detection or protection claims are made.
 
 ## Publication status
 
