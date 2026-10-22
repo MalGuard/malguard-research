@@ -25,6 +25,15 @@ jobs:
         run: |
           python -m pip install --disable-pip-version-check reportlab==4.2.5
           python tools/build-pdfs.py
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Vendor realistic book page-flip engine
+        run: |
+          npm install --no-save --ignore-scripts --no-audit --no-fund page-flip@2.0.7
+          mkdir -p assets/vendor
+          cp node_modules/page-flip/dist/js/page-flip.browser.js assets/vendor/page-flip.browser.js
+          test -s assets/vendor/page-flip.browser.js
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
