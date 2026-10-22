@@ -1,10 +1,8 @@
 "use strict";
 
-/**
- * MalGuard Research / Paper folio
- * A physically curved, strip-mesh page with front/back printed surfaces.
- * No third-party runtime or continuous animation.
- */
+/* MalGuard Research book: HTML pages remain paper, never article panels.
+   StPageFlip 2.0.7 (MIT) is bundled locally during the Pages build.
+   Each paper is typeset into fixed-size book leaves with a hard cover. */
 (() => {
   const allowed = new Set([
     "hash-identity-vs-trust", "zip-structure-vs-filename",
@@ -16,366 +14,228 @@
   const previous = document.getElementById("previous-page");
   const next = document.getElementById("next-page");
   const status = document.getElementById("page-status");
-  const mobileQuery = matchMedia("(max-width: 760px)");
-  const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-  const clamp = n => Math.min(1, Math.max(0, n));
-
-  let pages = [], current = 0, busy = false, gesture = null;
-  let book, left, right, mesh, shade;
-  let strips = [], sheetWidth = 0, pageHeight = 0, raf = 0;
-  let activeFlip = null, revealed = false;
-
   if (!allowed.has(slug)) {
-    spread.textContent = "Select a published paper from the research index.";
-    status.textContent = "No paper selected";
+    spread.textContent = "Choose a book from the research library.";
+    status.textContent = "No publication selected";
     return;
   }
-
   const articleUrl = "/papers/" + slug + ".html";
   document.getElementById("article-link").href = articleUrl;
   document.getElementById("pdf-link").href = "/pdfs/" + slug + ".pdf";
 
-  const mobile = () => mobileQuery.matches;
-  const step = () => mobile() ? 1 : 2;
-  const available = dir => dir > 0 ? current + step() < pages.length : current > 0;
-
-  function page(label, heading, contents, cover = false) {
-    const node = document.createElement("section");
-    node.className = cover ? "reader-page reader-cover" : "reader-page";
-    const kicker = document.createElement("div");
-    kicker.className = "reader-page-label";
-    kicker.textContent = label;
-    const title = document.createElement(cover ? "h2" : "h3");
-    title.textContent = heading;
-    node.append(kicker, title);
-    contents.forEach(el => node.append(el.cloneNode(true)));
-    const foot = document.createElement("div");
-    foot.className = "reader-page-footer";
-    foot.textContent = "MALGUARD RESEARCH  /  2026";
-    node.append(foot);
+  function textNode(tag, text, cls) {
+    const node = document.createElement(tag);
+    node.textContent = text;
+    if (cls) node.className = cls;
     return node;
   }
 
-  function pageAt(index) {
-    if (index >= 0 && index < pages.length) return pages[index].cloneNode(true);
-    const blank = document.createElement("div");
-    blank.className = "reader-page reader-page-blank";
-    blank.textContent = "MALGUARD / RESEARCH";
-    blank.setAttribute("aria-hidden", "true");
-    return blank;
+  function makeLeaf(kind = "paper") {
+    const leaf = document.createElement("div");
+    leaf.className = "folio-leaf folio-" + kind;
+    if (kind === "front" || kind === "back") leaf.dataset.density = "hard";
+    const inside = document.createElement("div");
+    inside.className = "folio-content";
+    leaf.append(inside);
+    return {leaf, inside};
   }
 
-  function put(el, index) { el.replaceChildren(pageAt(index)); }
-
-  function updateControls() {
-    previous.disabled = busy || !available(-1);
-    next.disabled = busy || !available(1);
-    const end = Math.min(current + step(), pages.length);
-    status.textContent = "Page" + (end > current + 1 ? "s " : " ") +
-      (current + 1) + (end > current + 1 ? "–" + end : "") + " of " + pages.length;
+  function makePaper() {
+    const {leaf, inside} = makeLeaf();
+    inside.append(textNode("div", "MALGUARD  /  RESEARCH", "folio-running-head"));
+    const body = document.createElement("div");
+    body.className = "folio-body";
+    inside.append(body);
+    inside.append(textNode("div", "MALGUARD RESEARCH  •  OCTOBER 2026", "folio-running-foot"));
+    return {leaf, body};
   }
 
-  function reset() {
-    cancelAnimationFrame(raf);
-    busy = false;
-    gesture = null;
-    mesh.replaceChildren();
-    mesh.hidden = true;
-    mesh.style.opacity = "1";
-    shade.style.opacity = "0";
-    activeFlip = null;
-    revealed = false;
-    book.classList.remove("is-turning", "is-dragging");
-    if (mobile()) {
-      left.replaceChildren();
-      put(right, current);
-    } else {
-      put(left, current);
-      put(right, current + 1);
-    }
-    updateControls();
-  }
+  // Use the same typography and dimensions for measurement and real pages.
+  // Split paragraphs into book pages instead of rendering a scrolling article.
+  function typeset(blocks) {
+    const stage = document.createElement("div");
+    stage.className = "folio-measure";
+    stage.setAttribute("aria-hidden", "true");
+    document.body.append(stage);
+    const result = [];
+    let paper = null;
+    let body = null;
+    const begin = () => {
+      paper = makePaper();
+      body = paper.body;
+      stage.replaceChildren(paper.leaf);
+      result.push(paper.leaf);
+    };
+    const overflow = () => body.scrollHeight > body.clientHeight + 2;
+    begin();
 
-  // Each paper strip has a real 3D position and a printed front/back.
-  // Neighboring strips follow a smooth curved profile rather than a rigid hinge.
-  function buildMesh(frontIndex, backIndex) {
-    mesh.replaceChildren();
-    strips = [];
-    sheetWidth = book.clientWidth * (mobile() ? 1 : .5);
-    pageHeight = book.clientHeight;
-    const count = mobile() ? 12 : 16;
-    const stripWidth = sheetWidth / count;
-    const frontPage = pageAt(frontIndex);
-    const backPage = pageAt(backIndex);
-    for (let i = 0; i < count; i++) {
-      const segment = document.createElement("div");
-      segment.className = "curl-strip";
-      segment.style.width = (stripWidth + .35) + "px";
-      segment.style.height = pageHeight + "px";
-      const frontFace = document.createElement("div");
-      frontFace.className = "curl-face curl-front";
-      const backFace = document.createElement("div");
-      backFace.className = "curl-face curl-back";
-      for (const [face, source, offset] of [
-        [frontFace, frontPage, i * stripWidth],
-        [backFace, backPage, sheetWidth - i * stripWidth]
-      ]) {
-        const content = document.createElement("div");
-        content.className = "curl-content";
-        content.style.width = sheetWidth + "px";
-        content.style.height = pageHeight + "px";
-        content.style.transform = "translateX(" + (-offset) + "px)";
-        content.append(source.cloneNode(true));
-        face.append(content);
-        const light = document.createElement("div");
-        light.className = "curl-light";
-        face.append(light);
+    function addBlock(original) {
+      const block = original.cloneNode(true);
+      body.append(block);
+      if (!overflow()) return;
+      block.remove();
+      if (body.childElementCount > 0) {
+        begin();
+        body.append(block);
+        if (!overflow()) return;
+        block.remove();
       }
-      segment.append(frontFace, backFace);
-      mesh.append(segment);
-      strips.push(segment);
-    }
-    mesh.hidden = false;
-  }
-
-  function draw(progress) {
-    const p = clamp(progress);
-    // The paper flexes most strongly in the middle of the turn.
-    // The local angle changes across its width, giving a true curved sheet.
-    const curvature = 26 * Math.sin(Math.PI * p);
-    const width = sheetWidth / strips.length;
-    let x = 0, z = 0;
-    for (let i = 0; i < strips.length; i++) {
-      const u = (i + .5) / strips.length;
-      const angle = -180 * p + curvature * (2 * u - 1);
-      const radians = angle * Math.PI / 180;
-      const strip = strips[i];
-      strip.style.transform = "translate3d(" + x.toFixed(2) + "px,0," +
-        z.toFixed(2) + "px) rotateY(" + angle.toFixed(3) + "deg)";
-      // Diffuse illumination plus darkening near the fold.
-      strip.style.setProperty("--curl-dark", (0.12 + .26 * Math.abs(Math.sin(radians))).toFixed(3));
-      strip.style.setProperty("--curl-glow", (0.08 + .13 * Math.max(0, Math.cos(radians))).toFixed(3));
-      x += Math.cos(radians) * width;
-      z -= Math.sin(radians) * width;
-    }
-    // Hand off to the resting page while the turning leaf still covers it.
-    // Crossfade during the last 8% to avoid a visible snap on reset.
-    if (activeFlip) {
-      const forward = activeFlip.direction > 0;
-      const completion = forward ? p : 1 - p;
-      const shouldReveal = completion >= .92;
-      if (!mobile() && shouldReveal !== revealed) {
-        const stationary = forward ? left : right;
-        const oldIndex = forward ? activeFlip.target - step() : activeFlip.target + step() + 1;
-        const newIndex = forward ? activeFlip.target : activeFlip.target + 1;
-        put(stationary, shouldReveal ? newIndex : oldIndex);
-        revealed = shouldReveal;
-      }
-      mesh.style.opacity = completion > .92
-        ? String(1 - clamp((completion - .92) / .08))
-        : "1";
-    }
-    shade.style.opacity = (Math.sin(Math.PI * p) * .45).toFixed(3);
-    shade.style.transform = "translateX(" + ((.5 - p) * sheetWidth * .55).toFixed(2) + "px)";
-  }
-
-  function begin(direction) {
-    if (busy || !available(direction)) return null;
-    busy = true;
-    updateControls();
-    const target = current + direction * step();
-    const forward = direction > 0;
-    let faceA, faceB;
-    if (mobile()) {
-      // A single page moves aside to reveal the new page underneath.
-      put(right, target);
-      faceA = forward ? current : target;
-      faceB = forward ? target : current;
-    } else if (forward) {
-      put(left, current);
-      put(right, target + 1);
-      faceA = current + 1;
-      faceB = target;
-    } else {
-      put(left, target);
-      put(right, current + 1);
-      faceA = target + 1;
-      faceB = current;
-    }
-    buildMesh(faceA, faceB);
-    activeFlip = {target, direction};
-    revealed = false;
-    mesh.style.opacity = "1";
-    book.classList.add("is-turning");
-    draw(forward ? 0 : 1);
-    return {target, direction, from:forward ? 0 : 1, to:forward ? 1 : 0};
-  }
-
-  function finish(flip, success) {
-    if (success) current = flip.target;
-    reset();
-  }
-
-  function animate(flip, from, to, success) {
-    cancelAnimationFrame(raf);
-    if (reducedMotion.matches) {
-      finish(flip, success);
-      return;
-    }
-    const duration = 720 * Math.abs(to - from) + 160;
-    const started = performance.now();
-    function tick(now) {
-      const t = clamp((now - started) / duration);
-      const eased = t < .5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
-      draw(from + (to - from) * eased);
-      if (t < 1) raf = requestAnimationFrame(tick);
-      else finish(flip, success);
-    }
-    raf = requestAnimationFrame(tick);
-  }
-
-  function turn(direction) {
-    if (busy || !available(direction)) return;
-    if (reducedMotion.matches) {
-      current += direction * step();
-      reset();
-      return;
-    }
-    const flip = begin(direction);
-    if (flip) animate(flip, flip.from, flip.to, true);
-  }
-
-  function down(event) {
-    if (busy || !event.isPrimary || (event.pointerType === "mouse" && event.button !== 0)) return;
-    if (event.target.closest("a,button,input,textarea,select")) return;
-    const rect = book.getBoundingClientRect();
-    const localX = event.clientX - rect.left;
-    // On desktop, the outer edge is the natural place to pick up a sheet.
-    if (event.pointerType === "mouse" && !mobile() &&
-      localX > rect.width * .36 && localX < rect.width * .64) return;
-    gesture = {id:event.pointerId, x:event.clientX, y:event.clientY,
-      startX:localX, flip:null, progress:0, dragging:false};
-  }
-
-  function move(event) {
-    if (!gesture || event.pointerId !== gesture.id) return;
-    const dx = event.clientX - gesture.x;
-    const dy = event.clientY - gesture.y;
-    if (reducedMotion.matches) return;
-    if (!gesture.dragging) {
-      if (Math.abs(dy) > 22 && Math.abs(dy) > Math.abs(dx)) {
-        gesture = null; // Do not steal vertical scrolling.
+      // Long standalone paragraphs are split at word boundaries.
+      const words = (original.textContent || "").trim().split(/\s+/);
+      if (words.length < 2) {
+        body.append(block);
         return;
       }
-      if (Math.abs(dx) < 12 || Math.abs(dx) < 1.3 * Math.abs(dy)) return;
-      const direction = dx < 0 ? 1 : -1;
-      const flip = begin(direction);
-      if (!flip) { gesture = null; return; }
-      gesture.flip = flip;
-      gesture.dragging = true;
-      book.classList.add("is-dragging");
-      try {book.setPointerCapture(event.pointerId);} catch (_) {}
-    }
-    const flip = gesture.flip;
-    const travel = Math.max(sheetWidth * .86, 110);
-    const delta = (flip.direction > 0 ? -dx : dx);
-    const fraction = clamp(delta / travel);
-    gesture.progress = flip.from + (flip.to - flip.from) * fraction;
-    cancelAnimationFrame(raf);
-    draw(gesture.progress);
-  }
-
-  function up(event) {
-    if (!gesture || event.pointerId !== gesture.id) return;
-    const g = gesture;
-    gesture = null;
-    if (g.dragging) {
-      const ratio = Math.abs(g.progress - g.flip.from);
-      const complete = ratio > .35;
-      book.classList.remove("is-dragging");
-      animate(g.flip, g.progress, complete ? g.flip.to : g.flip.from, complete);
-    } else if (reducedMotion.matches) {
-      const dx = event.clientX - g.x;
-      const dy = event.clientY - g.y;
-      if (Math.abs(dx) > 65 && Math.abs(dx) > 1.3 * Math.abs(dy)) turn(dx < 0 ? 1 : -1);
-    } else {
-      // Clicking a paper's outer corner lifts and turns it.
-      const rect = book.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      if (mobile()) {
-        if (x > rect.width * .72) turn(1);
-        else if (x < rect.width * .28) turn(-1);
-      } else {
-        if (x > rect.width * .88) turn(1);
-        else if (x < rect.width * .12) turn(-1);
+      let chunk = [];
+      let part = document.createElement(original.tagName.toLowerCase());
+      part.className = original.className;
+      body.append(part);
+      for (const word of words) {
+        chunk.push(word);
+        part.textContent = chunk.join(" ");
+        if (overflow() && chunk.length > 1) {
+          chunk.pop();
+          part.textContent = chunk.join(" ");
+          begin();
+          part = document.createElement(original.tagName.toLowerCase());
+          part.className = original.className;
+          body.append(part);
+          chunk = [word];
+          part.textContent = word;
+        }
       }
     }
+
+    for (const block of blocks) addBlock(block);
+    stage.remove();
+    return result;
   }
 
-  fetch(articleUrl).then(response => {
-    if (!response.ok) throw new Error("Publication not found");
-    return response.text();
-  }).then(html => {
-    const doc = new DOMParser().parseFromString(html, "text/html");
-    const title = doc.querySelector("h1.detail-title")?.textContent?.trim();
-    const abstract = doc.querySelector(".detail-lead");
-    const article = doc.querySelector("article.detail-card");
-    if (!title || !article) throw new Error("Invalid publication");
-    document.getElementById("book-heading").textContent = title;
-    document.title = title + " | Book Reader | MalGuard Research";
+  function cover(title, type, isBack = false) {
+    const {leaf, inside} = makeLeaf(isBack ? "back" : "front");
+    const art = document.createElement("div");
+    art.className = "folio-cover-art";
+    art.append(textNode("div", "M  /  R", "folio-cover-monogram"));
+    art.append(textNode("div", "MALGUARD  RESEARCH", "folio-cover-imprint"));
+    if (!isBack) {
+      art.append(textNode("div", type, "folio-cover-type"));
+      art.append(textNode("h2", title, "folio-cover-title"));
+      art.append(textNode("div", "ORIGINAL SECURITY RESEARCH  /  2026", "folio-cover-date"));
+    } else {
+      art.append(textNode("div", "Research with evidence.\nSecurity without assumptions.", "folio-cover-quote"));
+      art.append(textNode("div", "research.malguard.site", "folio-cover-date"));
+    }
+    inside.append(art);
+    return leaf;
+  }
 
-    pages = [page("MALGUARD RESEARCH / ORIGINAL TECHNICAL NOTE", title,
-      abstract ? [abstract] : [], true)];
+  function titleLeaf(title, lead) {
+    const {leaf, inside} = makeLeaf();
+    inside.classList.add("folio-title-inside");
+    inside.append(textNode("div", "MALGUARD RESEARCH / PUBLICATION SERIES", "folio-running-head"));
+    inside.append(textNode("div", "TECHNICAL RESEARCH NOTE", "folio-intro-eyebrow"));
+    inside.append(textNode("h2", title, "folio-intro-title"));
+    inside.append(textNode("p", lead, "folio-intro-lead"));
+    inside.append(textNode("p",
+      "Original technical analysis. Not independently peer-reviewed. " +
+      "Illustrative examples are not empirical malware tests.",
+      "folio-intro-disclosure"));
+    inside.append(textNode("div", "OCTOBER 2026  /  MALGUARD", "folio-running-foot"));
+    return leaf;
+  }
+
+  function extractBlocks(doc) {
+    const blocks = [];
+    const article = doc.querySelector("article.detail-card");
+    if (!article) throw new Error("Publication content missing");
     for (const section of article.querySelectorAll(":scope > section")) {
       const heading = section.querySelector("h2");
-      if (!heading) continue;
-      const children = [...section.children].filter(node => node !== heading);
-      pages.push(page("MALGUARD RESEARCH / RESEARCH PAPER", heading.textContent, children));
+      if (heading) blocks.push(textNode("h3", heading.textContent.trim(), "folio-section-heading"));
+      for (const child of section.children) {
+        if (child === heading) continue;
+        if (child.matches("p")) {
+          const p = document.createElement("p");
+          p.className = "folio-paragraph";
+          p.textContent = child.textContent.trim();
+          blocks.push(p);
+        } else if (child.matches("ol,ul")) {
+          for (const li of child.querySelectorAll(":scope > li")) {
+            const p = document.createElement("p");
+            p.className = "folio-reference";
+            p.textContent = "• " + li.textContent.trim();
+            blocks.push(p);
+          }
+        }
+      }
     }
-    if (pages.length < 2) throw new Error("No article sections found");
+    return blocks;
+  }
+
+  fetch(articleUrl).then(r => {
+    if (!r.ok) throw new Error("Publication not found");
+    return r.text();
+  }).then(html => {
+    if (!window.St || !window.St.PageFlip) throw new Error("Book engine unavailable");
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const title = doc.querySelector("h1.detail-title")?.textContent?.trim();
+    const lead = doc.querySelector(".detail-lead")?.textContent?.trim();
+    if (!title || !lead) throw new Error("Invalid publication");
+
+    document.getElementById("book-heading").textContent = title;
+    document.title = title + " | Book Reader | MalGuard Research";
+    const blocks = extractBlocks(doc);
+    const leaves = [
+      cover(title, "SECURITY / GAME MODS / MALWARE"),
+      titleLeaf(title, lead),
+      ...typeset(blocks)
+    ];
+    const {leaf: colophon, inside} = makeLeaf();
+    inside.classList.add("folio-colophon");
+    inside.append(textNode("div", "MALGUARD / RESEARCH", "folio-running-head"));
+    inside.append(textNode("h2", "End of publication", "folio-intro-title"));
+    inside.append(textNode("p", "This original research note is not independently peer-reviewed. " +
+      "Read the full HTML edition for source links and methodology.", "folio-intro-lead"));
+    inside.append(textNode("p", "research.malguard.site", "folio-colophon-url"));
+    leaves.push(colophon, cover(title, "", true));
 
     spread.replaceChildren();
-    book = document.createElement("div");
-    book.className = "reader-book";
-    book.setAttribute("aria-label", "Physical book with draggable, curling pages");
-    book.innerHTML =
-      '<div class="book-stack" aria-hidden="true"></div>' +
-      '<div class="book-leaf book-leaf-left"></div>' +
-      '<div class="book-leaf book-leaf-right"></div>' +
-      '<div class="book-gutter" aria-hidden="true"></div>' +
-      '<div class="book-cast-shadow" aria-hidden="true"></div>' +
-      '<div class="curl-mesh" hidden aria-hidden="true"></div>';
-    left = book.querySelector(".book-leaf-left");
-    right = book.querySelector(".book-leaf-right");
-    mesh = book.querySelector(".curl-mesh");
-    shade = book.querySelector(".book-cast-shadow");
-    spread.append(book);
+    const root = document.createElement("div");
+    root.className = "folio-book";
+    spread.append(root);
+    root.append(...leaves);
 
-    previous.addEventListener("click", () => turn(-1));
-    next.addEventListener("click", () => turn(1));
-    book.addEventListener("pointerdown", down);
-    book.addEventListener("pointermove", move);
-    book.addEventListener("pointerup", up);
-    book.addEventListener("pointercancel", event => {
-      if (!gesture || event.pointerId !== gesture.id) return;
-      const g = gesture;
-      gesture = null;
-      if (g.dragging) animate(g.flip, g.progress, g.flip.from, false);
+    const flip = new window.St.PageFlip(root, {
+      width: 420, height: 580, size: "stretch",
+      minWidth: 260, maxWidth: 460, minHeight: 360, maxHeight: 635,
+      showCover: true, drawShadow: true,
+      maxShadowOpacity: .48,
+      flippingTime: matchMedia("(prefers-reduced-motion: reduce)").matches ? 1 : 900,
+      usePortrait: true, mobileScrollSupport: true,
+      swipeDistance: 30, disableFlipByClick: true, autoSize: true
     });
+
+    const update = () => {
+      const index = flip.getCurrentPageIndex();
+      status.textContent = "Leaf " + (index + 1) + " of " + flip.getPageCount();
+      previous.disabled = index === 0;
+      next.disabled = index >= flip.getPageCount() - 1;
+    };
+    flip.on("flip", update);
+    flip.on("init", update);
+    flip.on("changeOrientation", update);
+    flip.loadFromHTML(leaves);
+    previous.addEventListener("click", () => flip.flipPrev("bottom"));
+    next.addEventListener("click", () => flip.flipNext("bottom"));
     document.addEventListener("keydown", event => {
       if (event.altKey || event.ctrlKey || event.metaKey) return;
       if (event.target.closest("input,textarea,select,button,a")) return;
-      if (event.key === "ArrowRight") turn(1);
-      if (event.key === "ArrowLeft") turn(-1);
+      if (event.key === "ArrowRight") flip.flipNext("bottom");
+      if (event.key === "ArrowLeft") flip.flipPrev("bottom");
     });
-    mobileQuery.addEventListener("change", () => {
-      if (busy) return;
-      if (!mobile()) current -= current % 2;
-      reset();
-    });
-    reset();
-  }).catch(() => {
-    spread.textContent = "The book could not be loaded. Open the full article instead.";
+    update();
+  }).catch(error => {
+    spread.textContent = "The book is temporarily unavailable. You can still read the HTML paper.";
     status.textContent = "Reader unavailable";
+    console.error("MalGuard book reader:", error);
   });
 })();
