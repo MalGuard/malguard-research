@@ -110,7 +110,7 @@
         // Keep original content as text, not web-article link/button elements.
         // These lines stay printed on book pages while turning.
         const t = node.textContent.replace(/\s+/g, " ").trim();
-        for (const chunk of splitBlock(t, 360)) {
+        for (const chunk of splitBlock(t, 220)) {
           blocks.push({kind:node.tagName.toLowerCase(), text:chunk});
         }
       }
@@ -145,7 +145,7 @@
         const contents = leaf.querySelector(".printed-content");
         let length = 0;
         let blocksOnPage = 0;
-        const charLimit = 560;
+        const charLimit = 315;
         while (indexInChapter < chapter.blocks.length) {
           const block = chapter.blocks[indexInChapter];
           const cost = block.text.length + 80;
