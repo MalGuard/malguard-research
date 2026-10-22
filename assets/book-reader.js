@@ -13,7 +13,8 @@
     "evidence-ladder-for-scanners",
     "game-mod-threat-model",
     "malicious-mod-distribution",
-    "static-vs-behavioral-analysis"
+    "static-vs-behavioral-analysis",
+    "gta6-fake-downloads-trust"
   ]);
   const slug = new URLSearchParams(location.search).get("paper");
   const stage = document.getElementById("reader-spread");
