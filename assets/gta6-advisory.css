@@ -1,0 +1,24 @@
+/* GTA VI security advisory: scoped additions, no change to site's global design. */
+.gta6-overview{display:grid;grid-template-columns:minmax(175px,.9fr) 1.2fr;gap:22px;align-items:center;margin:26px 0 30px;padding:24px;border:1px solid #c4d4ea;border-radius:17px;background:linear-gradient(135deg,#eef5ff,#fbfdff);color:#1b3150}
+.gta6-overview>div{display:flex;flex-direction:column;gap:8px}
+.gta6-overview strong{font:800 clamp(29px,4vw,39px)/1.12 Inter,Arial,sans-serif;letter-spacing:-.04em;color:#174b91}
+.gta6-overview small{font-size:12px;line-height:1.6;color:#456481}
+.gta6-chip{display:inline-block;width:fit-content;padding:6px 10px;border-radius:7px;background:#d9e9ff;color:#174b91;font:800 9px/1.4 Inter,Arial,sans-serif;letter-spacing:.08em}
+.gta6-overview p{font-size:14px;line-height:1.75;margin:0}
+.gta6-toc{margin:30px 0;padding:23px;border:1px solid #d3deeb;border-radius:14px;background:#f8fbff}
+.gta6-toc>strong{display:block;font:800 16px Inter,Arial,sans-serif;color:#213d61;margin-bottom:13px}
+.gta6-toc ol{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 28px;padding-left:20px;margin:0}
+.gta6-toc li{font-size:13px;line-height:1.55;padding-right:4px}
+.gta6-toc a{color:#205caa;text-decoration:none}
+.gta6-toc a:hover{text-decoration:underline}
+.gta6-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:23px 0 8px}
+.gta6-compare>div{display:flex;flex-direction:column;gap:0;background:#f1f7ff;border:1px solid #ccdbee;border-radius:13px;overflow:hidden}
+.gta6-compare>div:nth-child(2){background:#fff7f5;border-color:#efd8d3}
+.gta6-compare strong{font:750 13px/1.5 Inter,Arial,sans-serif;color:#1c406b;padding:13px 16px;border-bottom:1px solid #d8e2ef}
+.gta6-compare>div:nth-child(2) strong{color:#843d39}
+.gta6-compare span{display:block;font:13px/1.5 Inter,Arial,sans-serif;padding:10px 16px;border-bottom:1px solid rgba(120,140,155,.14)}
+.gta6-compare span:last-child{border-bottom:0}
+.gta6-compare-caption{color:#566b85;font-size:12px;font-style:italic}
+.detail-card>section{scroll-margin-top:20px}
+.detail-card section.references a{overflow-wrap:anywhere}
+@media(max-width:700px){.gta6-overview,.gta6-compare{grid-template-columns:1fr}.gta6-toc ol{grid-template-columns:1fr}.gta6-overview{padding:18px}.gta6-toc{padding:18px}}
