@@ -18,6 +18,7 @@ PAPERS = (
     "game-mod-threat-model",
     "malicious-mod-distribution",
     "static-vs-behavioral-analysis",
+    "gta6-fake-downloads-trust",
 )
 ERRORS = []
 
