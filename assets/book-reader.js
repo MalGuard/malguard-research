@@ -187,6 +187,7 @@
     if (!candidate || event.pointerId !== candidate.id) return;
     const dx = event.clientX - candidate.x;
     const dy = event.clientY - candidate.y;
+    if (motionQuery.matches) return; // Honor the system reduced-motion setting.
     if (!drag) {
       if (Math.abs(dy) > 22 && Math.abs(dy) > Math.abs(dx)) {
         candidate = null; // Preserve normal vertical reading/scrolling.
@@ -223,7 +224,12 @@
       drag = null;
       animateTo(flip, complete);
     } else {
+      const dx = event.clientX - candidate.x;
+      const dy = event.clientY - candidate.y;
       candidate = null;
+      if (motionQuery.matches && Math.abs(dx) > 75 && Math.abs(dx) > 1.35 * Math.abs(dy)) {
+        turn(dx < 0 ? 1 : -1);
+      }
     }
   }
 
