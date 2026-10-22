@@ -23,7 +23,7 @@ jobs:
           python-version: '3.12'
       - name: Build downloadable research PDFs
         run: |
-          python -m pip install --disable-pip-version-check reportlab==4.2.5
+          python -m pip install --disable-pip-version-check reportlab==4.2.5 pypdf==5.6.0
           python tools/build-pdfs.py
           python tools/build-gta6-report.py
       - uses: actions/setup-node@v4
